@@ -1,0 +1,7 @@
+# Proyecto A/B testing con Hillstrom. Versiones mínimas.
+# Para fijar las exactas de tu entorno: pip freeze > requirements-lock.txt
+numpy>=1.26
+pandas>=2.0
+scipy>=1.11
+matplotlib>=3.8
+ipykernel>=6.0

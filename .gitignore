@@ -1,0 +1,21 @@
+# Datos descargados (se regeneran desde el blog de MineThatData)
+data/
+
+# Entornos virtuales
+.venv/
+venv/
+env/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Editores y sistema
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
