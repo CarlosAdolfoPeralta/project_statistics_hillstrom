@@ -33,22 +33,22 @@ def compare_proportions(x1, n1, x0, n0, alpha=0.05):
     se = np.sqrt(p_comb * (1 - p_comb) * (1 / n1 + 1 / n0))
     if se > 0:
         z = diff / se
-        p_valor = 2 * stats.norm.sf(abs(z))
+        p_value = 2 * stats.norm.sf(abs(z))
     else:  # sin eventos en ningún grupo
-        z, p_valor = np.nan, 1.0
+        z, p_value = np.nan, 1.0
 
     # La razón de tasas solo está definida si hay eventos en ambos grupos
     if x1 > 0 and x0 > 0:
         rr = p1 / p0
         se_log = np.sqrt(1 / x1 - 1 / n1 + 1 / x0 - 1 / n0)
         za = stats.norm.ppf(1 - alpha / 2)
-        rr_bajo, rr_alto = rr * np.exp(-za * se_log), rr * np.exp(za * se_log)
+        rr_low, rr_high = rr * np.exp(-za * se_log), rr * np.exp(za * se_log)
     else:
-        rr = rr_bajo = rr_alto = np.nan
+        rr = rr_low = rr_high = np.nan
     return {
-        "p1": p1, "p0": p0, "diff": diff, "ic_bajo": lo, "ic_alto": hi,
-        "z": z, "p_valor": p_valor,
-        "rr": rr, "rr_bajo": rr_bajo, "rr_alto": rr_alto,
+        "p1": p1, "p0": p0, "diff": diff, "low_ic": lo, "high_ic": hi,
+        "z": z, "p_value": p_value,
+        "rr": rr, "rr_low": rr_low, "rr_high": rr_high,
     }
 
 
@@ -85,7 +85,7 @@ def welch_diff(a, b, alpha=0.05):
     se = np.sqrt(a.var(ddof=1) / len(a) + b.var(ddof=1) / len(b))
     t, p = stats.ttest_ind(a, b, equal_var=False)
     za = stats.norm.ppf(1 - alpha / 2)
-    return {"diff": diff, "ic_bajo": diff - za * se, "ic_alto": diff + za * se, "p_valor": p}
+    return {"diff": diff, "ic_low": diff - za * se, "ic_high": diff + za * se, "p_value": p}
 
 
 def _n_requerido(p0, p1, alpha, power):
@@ -135,4 +135,4 @@ def heterogeneity_test(x1, n1, x0, n0):
     d_medio = np.sum(w * d) / np.sum(w)
     q = float(np.sum(w * (d - d_medio) ** 2))
     gl = len(d) - 1
-    return {"Q": q, "gl": gl, "p_valor": float(stats.chi2.sf(q, gl)), "efecto_comun": float(d_medio)}
+    return {"Q": q, "gl": gl, "p_value": float(stats.chi2.sf(q, gl)), "efecto_comun": float(d_medio)}

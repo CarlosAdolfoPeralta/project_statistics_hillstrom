@@ -1,88 +1,90 @@
-# A/B testing de campañas de email: análisis frecuentista, bayesiano y por segmentos
+🇪🇸 [Leer en español](README.es.md)
 
-Análisis de un experimento aleatorizado de email marketing (el *MineThatData E-Mail Analytics Challenge* de Kevin Hillstrom, 2008): validación del diseño, estimación del efecto de cada campaña con intervalos de confianza y corrección por comparaciones múltiples, enfoque bayesiano y exploración de si el efecto cambia según el tipo de cliente.
+# Email Campaign A/B Testing: Frequentist, Bayesian and Segment Analysis
 
-**Autor:** Carlos Adolfo Peralta · [LinkedIn](https://www.linkedin.com/in/carlosperalta1993/) · [GitHub](https://github.com/CarlosAdolfoPeralta)
+Analysis of a randomized email marketing experiment (Kevin Hillstrom's *MineThatData E-Mail Analytics Challenge*, 2008): experiment design validation, estimation of each campaign's effect with confidence intervals and multiple-comparison correction, a Bayesian approach, and an exploration of whether the effect changes by customer type.
 
-## Resumen
+**Author:** Carlos Adolfo Peralta · [LinkedIn](https://www.linkedin.com/in/carlosperalta1993/) · [GitHub](https://github.com/CarlosAdolfoPeralta)
 
-- **El experimento:** 64.000 clientes que compraron en los últimos 12 meses, asignados al azar a recibir un email con productos para **hombres**, un email con productos para **mujeres**, o ningún email (**control**). Se midió durante dos semanas si visitaron el sitio, si compraron y cuánto gastaron.
-- **El diseño es sólido:** los tres grupos tienen el tamaño esperado (un tercio cada uno, p = 0,90) y son comparables en todo lo medido antes del experimento (diferencia estandarizada máxima de 0,009), por lo que las diferencias posteriores se pueden atribuir al email.
-- **Los dos emails funcionan, y el de hombres rinde más:** frente al control, el email para hombres sube la conversión de 0,57 % a 1,25 % (+0,68 pp) y el de mujeres a 0,88 % (+0,31 pp). El de hombres supera al de mujeres por 0,37 pp. Todas las diferencias siguen siendo significativas tras la corrección por comparaciones múltiples.
-- **Ingreso incremental (bruto):** unos 770 dólares por cada 1.000 emails con el email para hombres y unos 424 con el de mujeres, frente al control.
-- **El enfoque bayesiano coincide:** la probabilidad de que el email para hombres supere al de mujeres en conversión es mayor a 99,9 %, y las conclusiones no dependen del prior.
-- **Hallazgo exploratorio:** el efecto sobre la visita cambia mucho según el historial de compras del cliente. El email para mujeres casi no aumenta la visita entre quienes solo compraron productos de hombres (+1,1 pp), mientras que entre quienes compraron productos de mujeres suma +7,4 pp.
+## Summary
 
-## Datos
+- **The experiment:** 64,000 customers who purchased in the last 12 months, randomly assigned to receive an email featuring **men's** products, an email featuring **women's** products, or no email (**control**). Over two weeks, it measured whether they visited the site, whether they purchased, and how much they spent.
+- **The design is sound:** the three groups have the expected size (one third each, p = 0.90) and are comparable on everything measured before the experiment (maximum standardized difference of 0.009), so later differences can be attributed to the email.
+- **Both emails work, and the men's email performs better:** versus control, the men's email raises conversion from 0.57% to 1.25% (+0.68 pp) and the women's email to 0.88% (+0.31 pp). The men's email beats the women's by 0.37 pp. All differences remain significant after multiple-comparison correction.
+- **Incremental revenue (gross):** about USD 770 per 1,000 emails with the men's email and about USD 424 with the women's, versus control.
+- **The Bayesian approach agrees:** the probability that the men's email beats the women's on conversion is above 99.9%, and the conclusions do not depend on the prior.
+- **Exploratory finding:** the effect on visits changes a lot depending on the customer's purchase history. The women's email barely increases visits among those who only bought men's products (+1.1 pp), while among those who bought women's products it adds +7.4 pp.
+
+## Data
 
 | | |
 |---|---|
-| Fuente | Blog MineThatData, de Kevin Hillstrom (2008) |
-| Clientes | 64.000, asignados al azar: control 21.306, email para hombres 21.307, email para mujeres 21.387 |
-| Variables previas | recencia, historial de gasto, compras de productos de hombres y de mujeres, zona, cliente nuevo, canal |
-| Resultados | `visit` (visitó el sitio), `conversion` (compró) y `spend` (gasto), en las dos semanas siguientes |
-| Particularidades | el 99,1 % de los clientes tiene gasto cero; entre los 578 que compraron, el gasto máximo es exactamente 499 dólares en los tres grupos |
+| Source | MineThatData blog, by Kevin Hillstrom (2008) |
+| Customers | 64,000, randomly assigned: control 21,306, men's email 21,307, women's email 21,387 |
+| Pre-experiment variables | recency, spend history, purchases of men's and women's products, region, new customer, channel |
+| Outcomes | `visit` (visited the site), `conversion` (purchased) and `spend` (amount spent), over the following two weeks |
+| Peculiarities | 99.1% of customers have zero spend; among the 578 who purchased, the maximum spend is exactly USD 499 in all three groups |
 
-## Metodología
+## Methodology
 
-1. **Validación del experimento** (`01_validacion_experimento`): calidad de los datos, consistencia entre las variables resultado, *sample ratio mismatch* y balance de las características previas (chi-cuadrado, ANOVA, Kruskal-Wallis y diferencias estandarizadas). Incluye el **plan de análisis**, fijado antes de mirar los resultados: conversión como métrica principal; visita y gasto como secundarias; corrección de Holm dentro de cada métrica.
-2. **Análisis frecuentista** (`02_analisis_frecuentista`):
-   - Conversión y visita: diferencia absoluta con intervalo de Newcombe, aumento relativo con intervalo en escala logarítmica y prueba z de dos proporciones.
-   - Gasto por cliente: prueba t de Welch más bootstrap de 10.000 remuestreos, por los ceros y la cola larga. Incluye sensibilidad a los montos altos y una advertencia sobre por qué no se compara causalmente el gasto entre compradores.
-   - Potencia: efecto mínimo detectable y tamaño de muestra necesario.
-3. **Enfoque bayesiano y segmentos** (`03_bayesiano_segmentos`):
-   - Posteriores beta para las tasas, probabilidad de superioridad, pérdida esperada, sensibilidad al prior y bootstrap bayesiano para el gasto.
-   - Análisis exploratorio por seis variables de segmentación, con prueba Q de Cochran de heterogeneidad y corrección de Holm.
+1. **Experiment validation** (`01_validacion_experimento`): data quality, consistency across outcome variables, *sample ratio mismatch* and balance of pre-experiment characteristics (chi-square, ANOVA, Kruskal-Wallis and standardized differences). Includes the **analysis plan**, fixed before looking at the results: conversion as the primary metric; visits and spend as secondary; Holm correction within each metric.
+2. **Frequentist analysis** (`02_analisis_frecuentista`):
+   - Conversion and visits: absolute difference with a Newcombe interval, relative lift with a log-scale interval, and a two-proportion z-test.
+   - Spend per customer: Welch's t-test plus a 10,000-resample bootstrap, because of the zeros and the long tail. Includes a sensitivity check on high amounts and a warning about why spend is not compared causally among purchasers.
+   - Power: minimum detectable effect and required sample size.
+3. **Bayesian approach and segments** (`03_bayesiano_segmentos`):
+   - Beta posteriors for the rates, probability of superiority, expected loss, prior sensitivity and a Bayesian bootstrap for spend.
+   - Exploratory analysis across six segmentation variables, with Cochran's Q heterogeneity test and Holm correction.
 
-Las funciones estadísticas están en `src/ab.py` y se validaron contra scipy (por ejemplo, la prueba z coincide con el chi-cuadrado 2x2 y Holm reproduce un caso conocido).
+The statistical functions are in `src/ab.py` and were validated against scipy (for example, the z-test matches the 2x2 chi-square and Holm reproduces a known case).
 
-## Resultados
+## Results
 
-### Efecto de cada email frente al control y entre sí
+### Effect of each email versus control and versus each other
 
-| Métrica | Control | Email hombres | Email mujeres | Hombres − control | Mujeres − control | Hombres − mujeres |
+| Metric | Control | Men's email | Women's email | Men's − control | Women's − control | Men's − women's |
 |---|---|---|---|---|---|---|
-| Conversión | 0,57 % | 1,25 % | 0,88 % | +0,68 pp (0,50 a 0,86) | +0,31 pp (0,15 a 0,47) | +0,37 pp (0,17 a 0,57) |
-| Visita | 10,6 % | 18,3 % | 15,1 % | +7,7 pp (7,0 a 8,3) | +4,5 pp (3,9 a 5,2) | +3,1 pp (2,4 a 3,8) |
-| Gasto por cliente | 0,65 USD | 1,42 USD | 1,08 USD | +0,77 USD (0,48 a 1,06) | +0,42 USD (0,17 a 0,69) | +0,35 USD (0,03 a 0,66) |
+| Conversion | 0.57% | 1.25% | 0.88% | +0.68 pp (0.50 to 0.86) | +0.31 pp (0.15 to 0.47) | +0.37 pp (0.17 to 0.57) |
+| Visits | 10.6% | 18.3% | 15.1% | +7.7 pp (7.0 to 8.3) | +4.5 pp (3.9 to 5.2) | +3.1 pp (2.4 to 3.8) |
+| Spend per customer | USD 0.65 | USD 1.42 | USD 1.08 | +USD 0.77 (0.48 to 1.06) | +USD 0.42 (0.17 to 0.69) | +USD 0.35 (0.03 to 0.66) |
 
-Intervalos de confianza del 95 % entre paréntesis (bootstrap en el gasto). Con la corrección de Holm, todas las diferencias son significativas al 5 %; la menos contundente es la del gasto entre emails (p = 0,03).
+95% confidence intervals in parentheses (bootstrap for spend). With Holm correction, all differences are significant at 5%; the least conclusive is the spend difference between emails (p = 0.03).
 
-- **Aumento relativo de la conversión:** +119 % con el email para hombres (IC 77 % a 171 %) y +54 % con el de mujeres (IC 23 % a 94 %).
-- **Origen del mayor gasto:** el gasto medio entre quienes compraron es parecido en los tres grupos (114, 114 y 122 dólares), por lo que el mayor ingreso por cliente proviene sobre todo de que compra más gente, no de compras más grandes.
-- **Robustez:** al limitar el gasto al percentil 90 de los compradores, los efectos se mantienen (+0,67, +0,39 y +0,28 USD). Aplicando Holm sobre las nueve comparaciones a la vez, todas siguen siendo significativas.
-- **Potencia:** con 21.306 clientes por grupo, el efecto mínimo detectable en conversión es de 0,22 pp (un aumento relativo de 39 %); detectar un aumento de 10 % habría requerido unos 286.000 clientes por grupo.
+- **Relative lift in conversion:** +119% with the men's email (CI 77% to 171%) and +54% with the women's (CI 23% to 94%).
+- **Source of the higher spend:** mean spend among purchasers is similar across the three groups (USD 114, 114 and 122), so the higher revenue per customer comes mainly from more people buying, not from larger purchases.
+- **Robustness:** when capping spend at the 90th percentile of purchasers, the effects hold (+0.67, +0.39 and +0.28 USD). Applying Holm across all nine comparisons at once, all remain significant.
+- **Power:** with 21,306 customers per group, the minimum detectable effect on conversion is 0.22 pp (a 39% relative lift); detecting a 10% lift would have required about 286,000 customers per group.
 
-### Enfoque bayesiano
+### Bayesian approach
 
-- La probabilidad de superioridad es mayor a 99,9 % en las tres comparaciones de conversión, y la probabilidad de que la diferencia entre emails supere 0,22 pp es de 93 %.
-- Elegir el email para hombres tiene una pérdida esperada de prácticamente 0 pp de conversión; elegir el de mujeres, de 0,37 pp.
-- Con tres priors distintos (uniforme, Jeffreys e informativo), la diferencia entre emails va de 0,353 a 0,369 pp: los datos dominan.
-- En el gasto, el bootstrap bayesiano da resultados casi idénticos al frecuentista (diferencias menores a 0,01 USD) y una probabilidad de 98,5 % de que el email para hombres supere al de mujeres.
+- The probability of superiority is above 99.9% in all three conversion comparisons, and the probability that the difference between emails exceeds 0.22 pp is 93%.
+- Choosing the men's email has an expected loss of practically 0 pp of conversion; choosing the women's, 0.37 pp.
+- With three different priors (uniform, Jeffreys and informative), the difference between emails ranges from 0.353 to 0.369 pp: the data dominate.
+- For spend, the Bayesian bootstrap gives results almost identical to the frequentist ones (differences under USD 0.01) and a 98.5% probability that the men's email beats the women's.
 
-### ¿Cambia el efecto según el tipo de cliente? (exploratorio)
+### Does the effect change by customer type? (exploratory)
 
-- **Conversión:** ninguna de las 18 pruebas de heterogeneidad es significativa tras Holm (el menor p ajustado es 0,15). El email para hombres tiene efecto positivo en los 22 segmentos analizados. Esta prueba tiene poca potencia con eventos raros, por lo que no se puede concluir que el efecto sea homogéneo.
-- **Visita, según afinidad:** sí hay variación fuerte (p ajustado ≤ 0,0001), y es el hallazgo más claro de esta parte:
+- **Conversion:** none of the 18 heterogeneity tests is significant after Holm (the smallest adjusted p is 0.15). The men's email has a positive effect in all 22 segments analyzed. This test has low power with rare events, so it cannot be concluded that the effect is homogeneous.
+- **Visits, by affinity:** there is strong variation (adjusted p ≤ 0.0001), and it is the clearest finding of this part:
 
-| Afinidad del cliente | Visita sin email | Efecto email hombres | Efecto email mujeres |
+| Customer affinity | Visits without email | Men's email effect | Women's email effect |
 |---|---|---|---|
-| Compró ambos tipos de productos | 18,1 % | +13,4 pp | +7,1 pp |
-| Solo productos de hombres | 10,0 % | +6,9 pp | +1,1 pp |
-| Solo productos de mujeres | 9,6 % | +7,1 pp | +7,4 pp |
+| Bought both types of products | 18.1% | +13.4 pp | +7.1 pp |
+| Only men's products | 10.0% | +6.9 pp | +1.1 pp |
+| Only women's products | 9.6% | +7.1 pp | +7.4 pp |
 
-  El email para mujeres rinde mucho menos fuera de su público natural. Es una hipótesis para un experimento nuevo (por ejemplo, no enviarlo a quienes solo compraron productos de hombres), no una conclusión definitiva: la visita es un paso intermedio y en conversión el patrón apunta en la misma dirección pero no es significativo.
+The women's email performs much worse outside its natural audience. This is a hypothesis for a new experiment (for example, not sending it to those who only bought men's products), not a definitive conclusion: visiting is an intermediate step, and for conversion the pattern points in the same direction but is not significant.
 
-## Limitaciones
+## Limitations
 
-- El ingreso es **bruto**: no se descuentan el costo de los emails ni el margen de los productos, que el dataset no trae.
-- El seguimiento cubre solo dos semanas, y la muestra son clientes que compraron en los últimos 12 meses, por lo que los resultados no se extienden a clientes nuevos o inactivos.
-- Los dos emails difieren en el contenido y en la audiencia a la vez, por lo que no se puede separar el efecto de uno y otro.
-- El dataset no trae identificador de cliente, así que no se pudieron verificar duplicados. Que el gasto máximo sea exactamente 499 dólares en todos los grupos sugiere un tope en el registro (no verificado), aunque los resultados no dependen de los montos altos.
-- La conversión es un evento raro (0,9 %): los intervalos del aumento relativo son amplios y el análisis por segmentos tiene poca potencia. Los segmentos son exploratorios y algunos tienen muy pocas compras.
-- Para decidir a qué clientes enviar cada email se necesitaría un modelo de uplift, que excede este análisis.
+- Revenue is **gross**: neither the cost of the emails nor the margin on the products is deducted, as the dataset does not include them.
+- Follow-up covers only two weeks, and the sample is customers who purchased in the last 12 months, so the results do not extend to new or inactive customers.
+- The two emails differ in both content and audience at the same time, so the effect of each cannot be separated.
+- The dataset has no customer identifier, so duplicates could not be checked. That the maximum spend is exactly USD 499 in all groups suggests a cap in the records (not verified), although the results do not depend on high amounts.
+- Conversion is a rare event (0.9%): the intervals for relative lift are wide and the segment analysis has low power. The segments are exploratory and some have very few purchases.
+- Deciding which customers should receive each email would require an uplift model, which is beyond the scope of this analysis.
 
-## Estructura del repositorio
+## Repository structure
 
 ```
 .
@@ -95,24 +97,24 @@ Intervalos de confianza del 95 % entre paréntesis (bootstrap en el gasto). Con 
 │   └── 03_bayesiano_segmentos.ipynb
 ├── src/
 │   ├── __init__.py
-│   ├── data.py          # carga del dataset y validación del esquema
-│   └── ab.py            # funciones estadísticas (proporciones, Holm, bootstrap, potencia, heterogeneidad)
-├── reports/             # tablas de resultados (.csv)
-└── data/                # datos descargados (no se versionan)
+│   ├── data.py          # dataset loading and schema validation
+│   └── ab.py            # statistical functions (proportions, Holm, bootstrap, power, heterogeneity)
+├── reports/             # result tables (.csv)
+└── data/                # downloaded data (not versioned)
 ```
 
-## Cómo reproducirlo
+## How to reproduce
 
-1. Instalar las dependencias:
+1. Install the dependencies:
    ```bash
    pip install -r requirements.txt
    ```
-2. Ejecutar los notebooks en orden desde la carpeta `notebooks/`. La primera vez, `src/data.py` descarga el dataset desde el blog de MineThatData y lo guarda en `data/raw/hillstrom.csv`. Si la descarga falla, se puede guardar el CSV manualmente en esa ruta.
-3. Los notebooks 02 y 03 guardan sus tablas de resultados en `reports/`.
+2. Run the notebooks in order from the `notebooks/` folder. The first time, `src/data.py` downloads the dataset from the MineThatData blog and saves it to `data/raw/hillstrom.csv`. If the download fails, you can save the CSV manually at that path.
+3. Notebooks 02 and 03 save their result tables in `reports/`.
 
-Las semillas están fijadas (42), por lo que el bootstrap y las simulaciones bayesianas son reproducibles.
+Seeds are fixed (42), so the bootstrap and the Bayesian simulations are reproducible.
 
-## Referencias
+## References
 
-- Hillstrom, K. (2008). *The MineThatData E-Mail Analytics And Data Mining Challenge*. Blog MineThatData. Fuente del dataset; los datos no se incluyen en este repositorio.
+- Hillstrom, K. (2008). *The MineThatData E-Mail Analytics And Data Mining Challenge*. MineThatData blog. Source of the dataset; the data is not included in this repository.
 - Newcombe, R. G. (1998). Interval estimation for the difference between independent proportions: comparison of eleven methods. *Statistics in Medicine*, 17(8), 873-890.

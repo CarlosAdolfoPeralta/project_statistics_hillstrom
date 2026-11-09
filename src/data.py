@@ -17,10 +17,10 @@ COLUMNAS = [
 # Nombre original de la campaña -> nombre corto del grupo
 MAPA_GRUPOS = {
     "No E-Mail": "control",
-    "Mens E-Mail": "hombres",
-    "Womens E-Mail": "mujeres",
+    "Mens E-Mail": "men",
+    "Womens E-Mail": "women",
 }
-GRUPOS = ["control", "hombres", "mujeres"]
+GRUPOS = ["control", "men", "women"]
 
 
 def load_hillstrom(path=RAW_PATH, url=URL):
@@ -51,7 +51,7 @@ def prepare(df):
         raise ValueError(f"Valores inesperados en 'segment': {desconocidos}")
 
     out = df.copy()
-    out["grupo"] = pd.Categorical(
+    out["group"] = pd.Categorical(
         out["segment"].map(MAPA_GRUPOS), categories=GRUPOS, ordered=True
     )
     return out
